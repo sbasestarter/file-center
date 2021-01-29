@@ -1,0 +1,11 @@
+GRpcServerConfig:
+  Name: "file-center:1"
+  Address: ":9110"
+  DiscoveryExConfig:
+    ExternalAddress: "127.0.0.1"
+HttpServerConfig:
+  Address: ":9111"
+DbConfig:
+  Redis:
+    "redis-1":
+      DSN: "redis://:*@dev.env:8900/2"
