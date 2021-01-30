@@ -161,6 +161,9 @@ github.com/jiuzhou-zhao/go-fundamental v0.0.2/go.mod h1:ItqajdCzlMSH802jZiFHgbYO
 github.com/jiuzhou-zhao/go-fundamental v0.0.3-0.20210127133201-56a7a7228447/go.mod h1:ItqajdCzlMSH802jZiFHgbYOTjgd5ZlPgAONeDZ1qa4=
 github.com/jiuzhou-zhao/go-fundamental v0.0.4-0.20210128081951-08fd376281d4 h1:5u5uEcJpSj5sjpLNdolkqADWwOmaJ3E2lzzsHmqnA/g=
 github.com/jiuzhou-zhao/go-fundamental v0.0.4-0.20210128081951-08fd376281d4/go.mod h1:z8eW73WDtOPMrhSVMvEIBnrHTYqJ28jFngmWkq/6Vqc=
+github.com/jiuzhou-zhao/go-fundamental v0.0.4-0.20210130040732-67f5dc67c0b5/go.mod h1:z8eW73WDtOPMrhSVMvEIBnrHTYqJ28jFngmWkq/6Vqc=
+github.com/jiuzhou-zhao/go-fundamental v0.0.4 h1:Hd3/FUt8ZTBtXME0iVk4MJKHin6JZJGBFadAMmDpEiY=
+github.com/jiuzhou-zhao/go-fundamental v0.0.4/go.mod h1:z8eW73WDtOPMrhSVMvEIBnrHTYqJ28jFngmWkq/6Vqc=
 github.com/jonboulle/clockwork v0.1.0/go.mod h1:Ii8DK3G1RaLaWxj9trq07+26W01tbo22gdxWY5EU2bo=
 github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=
 github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1:6v2b51hI/fHJwM22ozAgKL4VKDeJcHhJFhtBdhmNjmU=
@@ -257,6 +260,8 @@ github.com/sgostarter/liblog v0.0.0-20210126113204-5ebb272c1a31 h1:b8wLwan61xly7
 github.com/sgostarter/liblog v0.0.0-20210126113204-5ebb272c1a31/go.mod h1:/KCUdKFHg4Ic86Gn6KcJQVNsEjqGDl396ermT/is59Q=
 github.com/sgostarter/librediscovery v0.0.0-20210128001628-086b7e4805bf h1:N7Xrp9U8bkOwsA0hjZntha5A3S/CtGeKbcTuG1bcSgQ=
 github.com/sgostarter/librediscovery v0.0.0-20210128001628-086b7e4805bf/go.mod h1:OVQwblZQbwO5GcZIZJqR9UEi98ltuIc3n6CLTI6Nqlc=
+github.com/sgostarter/librediscovery v0.0.0-20210130064833-ffd16334251c h1:hLamB/cvhokjiiZvIFPQaL5QWPuILR3lvNXpzTAXT9g=
+github.com/sgostarter/librediscovery v0.0.0-20210130064833-ffd16334251c/go.mod h1:e7zulKaYRjY4PgEH+sEbvdE82ld8H3nyJcuddz7KE68=
 github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24/go.mod h1:M+9NzErvs504Cn4c5DxATwIqPbtswREoFCre64PpcG4=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
