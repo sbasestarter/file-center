@@ -9,6 +9,7 @@ import (
 	"github.com/jiuzhou-zhao/go-fundamental/dbtoolset"
 	"github.com/jiuzhou-zhao/go-fundamental/loge"
 	"github.com/jiuzhou-zhao/go-fundamental/servicetoolset"
+	"github.com/jiuzhou-zhao/go-fundamental/tracing"
 	"github.com/sbasestarter/file-center/internal/config"
 	"github.com/sbasestarter/file-center/internal/file-center/server"
 	"github.com/sbasestarter/proto-repo/gen/protorepo-file-center-go"
@@ -23,7 +24,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	loge.SetGlobalLogger(loge.NewLogger(logger))
+	loggerChain := loge.NewLoggerChain()
+	loggerChain.AppendLogger(tracing.NewTracingLogger())
+	loggerChain.AppendLogger(logger)
+	loge.SetGlobalLogger(loge.NewLogger(loggerChain))
 
 	var cfg config.Config
 	_, err = libconfig.Load("config", &cfg)
@@ -41,12 +45,12 @@ func main() {
 	cfg.StgTmpRoot, _ = filepath.Abs(cfg.StgTmpRoot)
 
 	ctx := context.Background()
-	dbToolset, err := dbtoolset.NewDBToolset(ctx, &cfg.DbConfig, logger)
+	dbToolset, err := dbtoolset.NewDBToolset(ctx, &cfg.DbConfig, loggerChain)
 	if err != nil {
 		loge.Fatalf(context.Background(), "db toolset create failed: %v", err)
 		return
 	}
-	cfg.GRpcServerConfig.DiscoveryExConfig.Setter, err = librediscovery.NewSetter(ctx, logger, dbToolset.GetRedis(),
+	cfg.GRpcServerConfig.DiscoveryExConfig.Setter, err = librediscovery.NewSetter(ctx, loggerChain, dbToolset.GetRedis(),
 		"", time.Minute)
 	if err != nil {
 		loge.Fatalf(context.Background(), "create rediscovery setter failed: %v", err)
