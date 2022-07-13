@@ -6,11 +6,11 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/jiuzhou-zhao/go-fundamental/loge"
 	"github.com/satori/go.uuid"
 	"github.com/sbasestarter/file-center/internal/config"
 	"github.com/sbasestarter/file-center/internal/file-center/handlers"
 	"github.com/sbasestarter/proto-repo/gen/protorepo-file-center-go"
+	"github.com/sgostarter/i/l"
 	"github.com/sgostarter/libfs"
 )
 
@@ -19,12 +19,18 @@ const (
 )
 
 type Server struct {
-	cfg *config.Config
+	cfg    *config.Config
+	logger l.WrapperWithContext
 }
 
 func NewServer(ctx context.Context, cfg *config.Config) *Server {
+	if cfg.Logger == nil {
+		cfg.Logger = l.NewNopLoggerWrapper()
+	}
+
 	return &Server{
-		cfg: cfg,
+		cfg:    cfg,
+		logger: cfg.Logger.WithFields(l.StringField(l.ClsKey, "Server")).GetWrapperWithContext(),
 	}
 }
 
@@ -33,10 +39,12 @@ func (s *Server) saveFile(fileName string, content []byte) (fileID string, err e
 	if err != nil {
 		return
 	}
+
 	err = item.WriteFile(bytes.NewBuffer(content))
 	if err != nil {
 		return
 	}
+
 	err = item.WriteFileRecord()
 	if err != nil {
 		return
@@ -54,14 +62,17 @@ func (s *Server) UpdateFile(ctx context.Context, r *filecenterpb.UpdateFileReque
 			},
 		}, nil
 	}
+
 	if r.FileName == "" || strings.Contains(r.FileName, "\\/") {
-		loge.Warnf(ctx, "null or invalid file name: %v", r.FileName)
+		s.logger.Warnf(ctx, "null or invalid file name: %v", r.FileName)
 		r.FileName = uuid.NewV4().String()
 	}
+
 	fileID, err := s.saveFile(r.FileName, r.Content)
 	if err != nil {
 		return fr(err.Error())
 	}
+
 	return &filecenterpb.UpdateFileResponse{
 		Status: &filecenterpb.ServerStatus{
 			Status: filecenterpb.FileCenterStatus_FCS_SUCCESS,

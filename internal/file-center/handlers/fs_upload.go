@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jiuzhou-zhao/go-fundamental/loge"
 	"github.com/sbasestarter/file-center/internal/config"
 	"github.com/sgostarter/libfs"
 )
@@ -27,7 +26,7 @@ func HandleFsUpload(cfg *config.Config) func(http.ResponseWriter, *http.Request)
 				ErrMsg:  err.Error(),
 			})
 			if err != nil {
-				loge.Error(r.Context(), err)
+				cfg.ContextLogger.Error(r.Context(), err)
 			}
 		}
 	}
@@ -43,11 +42,11 @@ func handleFsUpload(w http.ResponseWriter, r *http.Request, cfg *config.Config) 
 	if fileSize > 0 && fileMd5 != "" && fileName != "" {
 		item, err := libfs.NewSFSItemByInfo(fileMd5, fileSize, fileName, cfg.StgRoot, cfg.StgTmpRoot)
 		if err != nil {
-			loge.Error(r.Context(), err)
+			cfg.ContextLogger.Error(r.Context(), err)
 		} else {
 			dExists, fExists, err := item.ExistsInStorage()
 			if err != nil {
-				loge.Error(r.Context(), err)
+				cfg.ContextLogger.Error(r.Context(), err)
 			} else {
 				if fExists {
 					fileID, err := item.GetFileID()
@@ -81,7 +80,7 @@ func handleFsUpload(w http.ResponseWriter, r *http.Request, cfg *config.Config) 
 	defer func() {
 		err := file.Close()
 		if err != nil {
-			loge.Error(r.Context(), err)
+			cfg.ContextLogger.Error(r.Context(), err)
 		}
 	}()
 

@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/jiuzhou-zhao/go-fundamental/loge"
 	"github.com/sbasestarter/file-center/internal/config"
 	"github.com/sgostarter/libfs"
 )
@@ -21,7 +20,7 @@ func HandleFsTransfer(cfg *config.Config) func(http.ResponseWriter, *http.Reques
 				ErrMsg:  err.Error(),
 			})
 			if err != nil {
-				loge.Error(r.Context(), err)
+				cfg.ContextLogger.Error(r.Context(), err)
 			}
 		}
 	}
@@ -36,7 +35,7 @@ func handleFsTransfer(w http.ResponseWriter, r *http.Request, cfg *config.Config
 	}
 
 	fileName := path.Base(uri.Path)
-	loge.Info(r.Context(), "[*] Filename "+fileName)
+	cfg.ContextLogger.Info(r.Context(), "[*] Filename "+fileName)
 
 	resp, err := http.Get(u)
 	if err != nil {
@@ -50,7 +49,7 @@ func handleFsTransfer(w http.ResponseWriter, r *http.Request, cfg *config.Config
 	defer func() {
 		err := resp.Body.Close()
 		if err != nil {
-			loge.Error(r.Context(), err)
+			cfg.ContextLogger.Error(r.Context(), err)
 		}
 	}()
 

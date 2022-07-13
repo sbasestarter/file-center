@@ -9,7 +9,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/jiuzhou-zhao/go-fundamental/loge"
 	"github.com/sbasestarter/file-center/internal/config"
 	"github.com/sgostarter/libfs"
 	_ "golang.org/x/image/bmp"
@@ -32,7 +31,7 @@ func HandleFsList(cfg *config.Config) func(http.ResponseWriter, *http.Request) {
 				ErrMsg:  err.Error(),
 			})
 			if err != nil {
-				loge.Error(r.Context(), err)
+				cfg.ContextLogger.Error(r.Context(), err)
 			}
 		}
 	}
@@ -63,9 +62,9 @@ func handleFsList(w http.ResponseWriter, r *http.Request, cfg *config.Config) er
 	}
 	err, files := libfs.GetFileList(lastfileid, cfg.StgRoot, forward, count)
 	if err != nil {
-		loge.Error(r.Context(), err)
 		return err
 	}
+
 	checkImage, err := strconv.ParseBool(kvs.Get("checkImage"))
 	if err != nil {
 		checkImage = false

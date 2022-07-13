@@ -14,9 +14,8 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/gorilla/mux"
-	"github.com/jiuzhou-zhao/go-fundamental/loge"
-	"github.com/jiuzhou-zhao/go-fundamental/pathutils"
 	"github.com/sbasestarter/file-center/internal/config"
+	"github.com/sgostarter/libeasygo/pathutils"
 	"github.com/sgostarter/libfs"
 )
 
@@ -25,7 +24,7 @@ func HandleFsDownload(cfg *config.Config) func(http.ResponseWriter, *http.Reques
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := handleFsDownload(w, r, cfg)
 		if err != nil {
-			loge.Warn(r.Context(), err)
+			cfg.ContextLogger.Warn(r.Context(), err)
 			http.NotFound(w, r)
 		}
 	}
@@ -35,7 +34,7 @@ func HandleFsDownloadV1(cfg *config.Config) func(http.ResponseWriter, *http.Requ
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := handleFsDownloadV1(w, r, cfg)
 		if err != nil {
-			loge.Warn(r.Context(), err)
+			cfg.ContextLogger.Warn(r.Context(), err)
 			http.NotFound(w, r)
 		}
 	}
@@ -45,7 +44,7 @@ func HandleFsImageCacheV1(cfg *config.Config) func(http.ResponseWriter, *http.Re
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := handleFsImageCacheV1(w, r, cfg)
 		if err != nil {
-			loge.Warn(r.Context(), err)
+			cfg.ContextLogger.Warn(r.Context(), err)
 			http.NotFound(w, r)
 		}
 	}
@@ -62,6 +61,7 @@ func handleFsImageCacheV1(w http.ResponseWriter, r *http.Request, cfg *config.Co
 	if err != nil {
 		return err
 	}
+
 	if expectW <= 0 {
 		expectW = 0
 	}
@@ -88,14 +88,17 @@ func handleFsImageCacheV1(w http.ResponseWriter, r *http.Request, cfg *config.Co
 		if err != nil {
 			return err
 		}
+
 		dataFile, err := item.GetDataFile()
 		if err != nil {
 			return err
 		}
+
 		exists, err := pathutils.IsFileExists(dataFile)
 		if err != nil {
 			return err
 		}
+
 		if !exists {
 			return fmt.Errorf("%v not exists", fileid)
 		}
@@ -130,7 +133,7 @@ func handleFsImageCacheV1(w http.ResponseWriter, r *http.Request, cfg *config.Co
 			})
 			dst = imaging.Paste(dst, thumb, image.Pt(0, 0))
 
-			err = pathutils.MakesureDirExists(thumbnailDir)
+			err = pathutils.MustDirExists(thumbnailDir)
 			if err != nil {
 				return err
 			}

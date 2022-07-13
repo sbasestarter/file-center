@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jiuzhou-zhao/go-fundamental/loge"
 	"github.com/sbasestarter/file-center/internal/config"
 	"github.com/sgostarter/libfs"
 )
@@ -23,16 +22,13 @@ func doJSONObjectResponse(ctx context.Context, w http.ResponseWriter, jsonobj in
 	w.WriteHeader(http.StatusOK)
 	bytes, err := json.Marshal(jsonobj)
 	if err != nil {
-		loge.Error(ctx, err)
-		return err
-	}
-	_, err = fmt.Fprint(w, string(bytes))
-	if err != nil {
-		loge.Error(ctx, err)
 		return err
 	}
 
-	loge.Infof(ctx, "%+v", jsonobj)
+	_, err = fmt.Fprint(w, string(bytes))
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -46,9 +42,6 @@ func HandleFsQuery(cfg *config.Config) func(http.ResponseWriter, *http.Request) 
 				ErrCode: -1,
 				ErrMsg:  err.Error(),
 			})
-			if err != nil {
-				loge.Error(r.Context(), err)
-			}
 		}
 	}
 }
