@@ -244,6 +244,17 @@ func handleFsDownloadV1(w http.ResponseWriter, r *http.Request, cfg *config.Conf
 
 	fileid := vars["file_id"]
 
+	if strings.HasPrefix(fileid, "raw-") {
+		img := filepath.Join(cfg.StgRoot, "raw", fileid[4:])
+		if exists, err := pathutils.IsFileExists(img); err != nil || !exists {
+			return cuserror.NewWithErrorMsg(fmt.Sprintf("%s not exists", fileid))
+		}
+
+		http.ServeFile(w, r, img)
+
+		return nil
+	}
+
 	if len([]rune(fileid)) < 32 {
 		return cuserror.NewWithErrorMsg("error:FileID incorrect")
 	}

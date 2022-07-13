@@ -14,6 +14,6 @@ type Config struct {
 	StgRoot    string `yaml:"stg_root"`
 	StgTmpRoot string `yaml:"stg_tmp_root"`
 
-	Logger        l.Wrapper            `yaml:"-"`
-	ContextLogger l.WrapperWithContext `yaml:"-"`
+	Logger        l.Wrapper            `yaml:"-" ignored:"true"`
+	ContextLogger l.WrapperWithContext `yaml:"-" ignored:"true"`
 }
