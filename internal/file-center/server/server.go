@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 	"github.com/sbasestarter/file-center/internal/config"
 	"github.com/sbasestarter/file-center/internal/file-center/handlers"
-	"github.com/sbasestarter/proto-repo/gen/protorepo-file-center-go"
+	filecenterpb "github.com/sbasestarter/proto-repo/gen/protorepo-file-center-go"
 	"github.com/sgostarter/i/l"
 	"github.com/sgostarter/libfs"
 )

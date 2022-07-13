@@ -19,6 +19,7 @@ func HandleFsTransfer(cfg *config.Config) func(http.ResponseWriter, *http.Reques
 				ErrCode: -1,
 				ErrMsg:  err.Error(),
 			})
+
 			if err != nil {
 				cfg.ContextLogger.Error(r.Context(), err)
 			}
@@ -37,30 +38,31 @@ func handleFsTransfer(w http.ResponseWriter, r *http.Request, cfg *config.Config
 	fileName := path.Base(uri.Path)
 	cfg.ContextLogger.Info(r.Context(), "[*] Filename "+fileName)
 
+	// nolint: gosec, noctx
 	resp, err := http.Get(u)
 	if err != nil {
 		return err
 	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 
 	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
-			cfg.ContextLogger.Error(r.Context(), err)
-		}
+		_ = resp.Body.Close()
 	}()
 
 	item, err := libfs.NewSFSItem(fileName, cfg.StgRoot, cfg.StgTmpRoot)
 	if err != nil {
 		return err
 	}
+
 	err = item.WriteFile(bytes.NewReader(body))
 	if err != nil {
 		return err
 	}
+
 	err = item.WriteFileRecord()
 	if err != nil {
 		return err
@@ -70,6 +72,7 @@ func handleFsTransfer(w http.ResponseWriter, r *http.Request, cfg *config.Config
 	if err != nil {
 		return err
 	}
+
 	return doJSONObjectResponse(r.Context(), w, &fsUploadResponse{
 		FileURL: fileID,
 	})

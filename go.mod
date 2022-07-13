@@ -14,7 +14,7 @@ require (
 	github.com/sgostarter/libfs v0.0.2-0.20220713040341-86bb948fcceb
 	github.com/sgostarter/liblogrus v0.0.9
 	github.com/sgostarter/librediscovery v0.0.1
-	github.com/sgostarter/libservicetoolset v0.0.18
+	github.com/sgostarter/libservicetoolset v0.0.19
 	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8
 	google.golang.org/grpc v1.47.0
 )

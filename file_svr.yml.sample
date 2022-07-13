@@ -1,0 +1,13 @@
+grpc_server_config:
+  name: "file-center:1"
+  address: 127.0.0.1:5002
+  web_address: 127.0.0.1:5102
+  discovery_ex_config:
+    external_address: "127.0.0.1"
+http_server_config:
+  address: 127.0.0.1:59002
+  discovery_ex_config:
+    external_address: "127.0.0.1"
+stg_root: fs/root
+stg_tmp_root: fs/tmp
+redis_dsn: "redis://:redis_default_pass@env.dev:8900/0"

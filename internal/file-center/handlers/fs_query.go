@@ -8,6 +8,8 @@ import (
 	"strconv"
 
 	"github.com/sbasestarter/file-center/internal/config"
+	"github.com/sgostarter/i/l"
+	"github.com/sgostarter/libeasygo/cuserror"
 	"github.com/sgostarter/libfs"
 )
 
@@ -17,9 +19,10 @@ type fsQueryResponse struct {
 	Exists  bool   `json:"exists"`
 }
 
-func doJSONObjectResponse(ctx context.Context, w http.ResponseWriter, jsonobj interface{}) error {
+func doJSONObjectResponse(_ context.Context, w http.ResponseWriter, jsonobj interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+
 	bytes, err := json.Marshal(jsonobj)
 	if err != nil {
 		return err
@@ -42,6 +45,10 @@ func HandleFsQuery(cfg *config.Config) func(http.ResponseWriter, *http.Request) 
 				ErrCode: -1,
 				ErrMsg:  err.Error(),
 			})
+
+			if err != nil {
+				cfg.ContextLogger.WithFields(l.ErrorField(err)).Error(r.Context(), "doJSONObjectResponseFailed")
+			}
 		}
 	}
 }
@@ -51,17 +58,20 @@ func handleFsQuery(w http.ResponseWriter, r *http.Request, cfg *config.Config) e
 	if err != nil {
 		return err
 	}
+
 	fileMd5 := r.FormValue("file_md5")
 	if fileSize <= 0 {
-		return fmt.Errorf("invalid paramters: %v - %v", fileSize, fileMd5)
+		return cuserror.NewWithErrorMsg(fmt.Sprintf("invalid parameters: %v - %v", fileSize, fileMd5))
 	}
 
 	var exists bool
+
 	if fileMd5 != "" {
 		exists, err = libfs.IsSizeMD5ExistsInStorage(fileSize, fileMd5, cfg.StgRoot)
 	} else {
 		exists, err = libfs.IsSizeExistsInStorage(fileSize, cfg.StgRoot)
 	}
+
 	if err != nil {
 		return err
 	}
@@ -69,6 +79,7 @@ func handleFsQuery(w http.ResponseWriter, r *http.Request, cfg *config.Config) e
 	err = doJSONObjectResponse(r.Context(), w, &fsQueryResponse{
 		Exists: exists,
 	})
+
 	if err != nil {
 		return err
 	}
