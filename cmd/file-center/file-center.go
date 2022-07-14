@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sbasestarter/file-center/internal/config"
 	"github.com/sbasestarter/file-center/internal/file-center/server"
-	filecenterpb "github.com/sbasestarter/proto-repo/gen/protorepo-file-go"
+	filepb "github.com/sbasestarter/proto-repo/gen/protorepo-file-go"
 	"github.com/sgostarter/i/l"
 	"github.com/sgostarter/libconfig"
 	"github.com/sgostarter/liblogrus"
@@ -60,7 +60,7 @@ func main() {
 	serviceToolset := servicetoolset.NewServerToolset(context.Background(), logger)
 
 	_ = serviceToolset.CreateGRpcServer(&cfg.GRpcServerConfig, nil, func(s *grpc.Server) error {
-		filecenterpb.RegisterFileCenterServer(s, fileCenterServer)
+		filepb.RegisterFileServiceServer(s, fileCenterServer)
 
 		return nil
 	})

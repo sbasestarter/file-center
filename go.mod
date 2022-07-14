@@ -7,7 +7,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/satori/go.uuid v1.2.0
-	github.com/sbasestarter/proto-repo v0.0.6
+	github.com/sbasestarter/proto-repo v0.0.8
 	github.com/sgostarter/i v0.1.12
 	github.com/sgostarter/libconfig v0.0.0-20220501124634-dd2bd2401e61
 	github.com/sgostarter/libeasygo v0.1.23
