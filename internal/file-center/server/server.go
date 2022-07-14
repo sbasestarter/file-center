@@ -9,9 +9,13 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"github.com/sbasestarter/file-center/internal/config"
 	"github.com/sbasestarter/file-center/internal/file-center/handlers"
-	filecenterpb "github.com/sbasestarter/proto-repo/gen/protorepo-file-center-go"
+	filepb "github.com/sbasestarter/proto-repo/gen/protorepo-file-go"
+	sharepb "github.com/sbasestarter/proto-repo/gen/protorepo-share-go"
 	"github.com/sgostarter/i/l"
 	"github.com/sgostarter/libfs"
+	"github.com/sgostarter/libservicetoolset/dbtoolset"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -19,18 +23,48 @@ const (
 )
 
 type Server struct {
-	cfg    *config.Config
-	logger l.WrapperWithContext
+	cfg       *config.Config
+	dbToolset *dbtoolset.Toolset
+	logger    l.WrapperWithContext
 }
 
-func NewServer(ctx context.Context, cfg *config.Config) *Server {
+func (s *Server) GetKV(ctx context.Context, request *filepb.GetKVRequest) (*filepb.GetKVResponse, error) {
+	redisCli := s.dbToolset.GetRedisByName("data")
+	if redisCli == nil {
+		return nil, status.Error(codes.Unimplemented, "")
+	}
+
+	v, err := redisCli.Get(ctx, request.GetKey()).Result()
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &filepb.GetKVResponse{Value: v}, nil
+}
+
+func (s *Server) SetKV(ctx context.Context, request *filepb.SetKVRequest) (*sharepb.Empty, error) {
+	redisCli := s.dbToolset.GetRedisByName("data")
+	if redisCli == nil {
+		return nil, status.Error(codes.Unimplemented, "")
+	}
+
+	err := redisCli.Set(ctx, request.GetKey(), request.GetValue(), 0).Err()
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &sharepb.Empty{}, nil
+}
+
+func NewServer(ctx context.Context, cfg *config.Config, dbToolset *dbtoolset.Toolset) *Server {
 	if cfg.Logger == nil {
 		cfg.Logger = l.NewNopLoggerWrapper()
 	}
 
 	return &Server{
-		cfg:    cfg,
-		logger: cfg.Logger.WithFields(l.StringField(l.ClsKey, "Server")).GetWrapperWithContext(),
+		cfg:       cfg,
+		dbToolset: dbToolset,
+		logger:    cfg.Logger.WithFields(l.StringField(l.ClsKey, "Server")).GetWrapperWithContext(),
 	}
 }
 
@@ -53,16 +87,7 @@ func (s *Server) saveFile(fileName string, content []byte) (fileID string, err e
 	return item.GetFileID()
 }
 
-func (s *Server) UpdateFile(ctx context.Context, r *filecenterpb.UpdateFileRequest) (*filecenterpb.UpdateFileResponse, error) {
-	fr := func(msg string) (*filecenterpb.UpdateFileResponse, error) {
-		return &filecenterpb.UpdateFileResponse{
-			Status: &filecenterpb.ServerStatus{
-				Status: filecenterpb.FileCenterStatus_FCS_FAILED,
-				Msg:    msg,
-			},
-		}, nil
-	}
-
+func (s *Server) UpdateFile(ctx context.Context, r *filepb.UpdateFileRequest) (*filepb.UpdateFileResponse, error) {
 	if r.FileName == "" || strings.Contains(r.FileName, "\\/") {
 		s.logger.Warnf(ctx, "null or invalid file name: %v", r.FileName)
 		r.FileName = uuid.NewV4().String()
@@ -70,13 +95,10 @@ func (s *Server) UpdateFile(ctx context.Context, r *filecenterpb.UpdateFileReque
 
 	fileID, err := s.saveFile(r.FileName, r.Content)
 	if err != nil {
-		return fr(err.Error())
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &filecenterpb.UpdateFileResponse{
-		Status: &filecenterpb.ServerStatus{
-			Status: filecenterpb.FileCenterStatus_FCS_SUCCESS,
-		},
+	return &filepb.UpdateFileResponse{
 		FileUrl: fileID,
 	}, nil
 }

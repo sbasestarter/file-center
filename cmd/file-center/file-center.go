@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sbasestarter/file-center/internal/config"
 	"github.com/sbasestarter/file-center/internal/file-center/server"
-	filecenterpb "github.com/sbasestarter/proto-repo/gen/protorepo-file-center-go"
+	filecenterpb "github.com/sbasestarter/proto-repo/gen/protorepo-file-go"
 	"github.com/sgostarter/i/l"
 	"github.com/sgostarter/libconfig"
 	"github.com/sgostarter/liblogrus"
@@ -55,7 +55,7 @@ func main() {
 		return
 	}
 
-	fileCenterServer := server.NewServer(context.Background(), &cfg)
+	fileCenterServer := server.NewServer(context.Background(), &cfg, dbToolset)
 
 	serviceToolset := servicetoolset.NewServerToolset(context.Background(), logger)
 
