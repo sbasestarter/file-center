@@ -24,7 +24,7 @@ func main() {
 
 	var cfg config.Config
 
-	_, err := libconfig.Load("file_svr.yml", &cfg)
+	_, err := libconfig.Load("file-center.yml", &cfg)
 	if err != nil {
 		logger.Fatalf("load config failed: %v", err)
 

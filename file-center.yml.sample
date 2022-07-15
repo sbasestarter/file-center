@@ -10,4 +10,7 @@ http_server_config:
     external_address: "127.0.0.1"
 stg_root: fs/root
 stg_tmp_root: fs/tmp
-redis_dsn: "redis://:redis_default_pass@env.dev:8900/0"
+db_config:
+  redis_dsn: "redis://:redis_default_pass@env.dev:8900/0"
+  redis_dsn_list:
+    data: "redis://:redis_default_pass@env.dev:8900/1"
