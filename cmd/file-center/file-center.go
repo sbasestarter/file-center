@@ -68,6 +68,8 @@ func main() {
 	r := mux.NewRouter()
 	fileCenterServer.HTTPRegister(r)
 	cfg.HTTPServerConfig.Handler = r
+	cfg.HTTPServerConfig.DiscoveryExConfig.Setter, _ = librediscovery.NewSetter(context.Background(), logger,
+		dbToolset.GetRedis(), "", time.Minute)
 	_ = serviceToolset.CreateHTTPServer(&cfg.HTTPServerConfig)
 
 	serviceToolset.Wait()
